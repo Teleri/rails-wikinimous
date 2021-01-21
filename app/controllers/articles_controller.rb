@@ -1,5 +1,5 @@
 class ArticlesController < ApplicationController
-  before_action :find_article, only: [:show, :edit, :destroy]
+  before_action :find_article, only: [:show, :edit, :update, :destroy]
   
   def index
     @articles = Article.all
@@ -13,9 +13,9 @@ class ArticlesController < ApplicationController
   end
   
   def create
-    @article = Article.new(params[:article])
-    if @article.save
-      redirect_to @article
+    @article = Article.new(article_params)
+    if @article.save!
+      redirect_to article_path(@article)
     else
       render 'new'
     end
@@ -25,12 +25,11 @@ class ArticlesController < ApplicationController
   end
 
   def update
-    @article = Article.find(params[:id])
-      if @article.update(params[:article])
-        redirect_to @article
-      else
-        render 'edit'
-      end
+    if @article.update(article_params)
+      redirect_to @article
+    else
+      render 'edit'
+    end
   end
   
   def destroy
@@ -45,5 +44,9 @@ class ArticlesController < ApplicationController
 
   def find_article
     @article = Article.find(params[:id])
+  end
+
+  def article_params
+    params.require(:article).permit(:title, :content)
   end
 end
